@@ -18,7 +18,7 @@ var easyCookieJS = {
         validityDateType = (typeof validityDateType !== 'undefined') ? validityDateType : 'y';
         validityDate = (typeof validityDate !== 'undefined') ? validityDate : 1;
 
-        if(this.__cookieExists(name)){
+        if(this.cookieExists(name)){
             console.warn('The cookie already exists, to modify this use the alterName(), alterContent() or alterValidity() methods.');
             return 'COOKIE_EXISTS';
         }
@@ -45,7 +45,9 @@ var easyCookieJS = {
                 }
 
                 var cookie = name+'='+content+';expires='+this.__date.toUTCString()+';path=/';
+                localStorage.setItem(name, this.__date);
                 document.cookie = cookie;
+                this.__date = new Date();
             }else{
                 console.warn('All parameters are required!');
             }
@@ -92,8 +94,9 @@ var easyCookieJS = {
      * @returns void on success | console warn if is not possible delete a cookie
      */
     delete: function(name){
-        if(this.__cookieExists(name)){
+        if(this.cookieExists(name)){
             document.cookie = name+'=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';
+            localStorage.removeItem(name);
         }else{
             console.warn('The cookie not exists, so it can not be deleted.')
         }
@@ -106,6 +109,11 @@ var easyCookieJS = {
      */
     deleteAll: function(){
         var cookies = this.getAll();
+        if(cookies === false){            
+            console.warn('No cookie found!');  
+            return false;
+        }  
+
         for(var index in cookies){
             this.delete(index);
         }
@@ -113,7 +121,6 @@ var easyCookieJS = {
     
     /**
      * Method to alter cookie name
-     * CAUTION - this method reset the validity date to the date now and add one more year
      * 
      * @param {string} oldName 
      * @param {string} newName 
@@ -121,18 +128,19 @@ var easyCookieJS = {
      * @returns void on success | boolean(false) if cookie not exits
      */
     alterName: function(oldName, newName){
-        if(!this.__cookieExists(oldName)){
+        if(!this.cookieExists(oldName)){
             console.warn('The cookie not exists, please create this with set() method.');
             return false;
         }
         var oldContent = this.get(oldName);
+        var preservedDate = new Date(localStorage.getItem(oldName));
         this.delete(oldName);
-        this.set(newName, oldContent);
+        document.cookie = newName+'='+oldContent+';expires='+preservedDate.toUTCString()+';path=/';
+        localStorage.setItem(newName, preservedDate);
     },
     
     /**
      * Method to alter cookie content
-     * CAUTION - this method reset the validity date to the date now and add one more year
      * 
      * @param {string} name 
      * @param {string} newContent 
@@ -140,12 +148,14 @@ var easyCookieJS = {
      * @returns void on success | boolean(false) if cookie not exits
      */
     alterContent: function(name, newContent){
-        if(!this.__cookieExists(name)){
+        if(!this.cookieExists(name)){
             console.warn('The cookie not exists, please create this with set() method.');
             return false;
         } 
+        var preservedDate = new Date(localStorage.getItem(name));
         this.delete(name);
-        this.set(name, newContent);
+        document.cookie = name+'='+newContent+';expires='+preservedDate.toUTCString()+';path=/';
+        localStorage.setItem(name, preservedDate);
     },
     
     /**
@@ -159,7 +169,7 @@ var easyCookieJS = {
      * @returns void on success | boolean(false) if cookie not exits
      */
     alterValidity: function(name, validityType, validity){
-        if(!this.__cookieExists(name)){
+        if(!this.cookieExists(name)){
             console.warn('The cookie not exists, please create this with set() method.');
             return false;
         }
@@ -179,9 +189,9 @@ var easyCookieJS = {
      * 
      * @returns boolean(true) if cookie exists | boolean(false) if cookie not exists
      */
-    __cookieExists: function(name){
+    cookieExists: function(name){
         return (this.get(name) !== false) ? true : false;
     }
 };
 
-Object.freeze(easyCookieJS);
+Object.seal(easyCookieJS);

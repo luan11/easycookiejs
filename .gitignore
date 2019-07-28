@@ -1,1 +1,17 @@
-index.html
+# Ignored files/folders
+node_modules
+package-lock.json
+debug.log
+package.json
+gulpfile.js
+.babelrc
+webpack.config.js
+dist
+src/*.html
+src/*.php
+src/*.json
+src/assets/css
+src/assets/fonts
+src/assets/images
+src/assets/scss
+src/assets/scripts/js

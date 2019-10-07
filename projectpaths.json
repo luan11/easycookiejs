@@ -1,0 +1,8 @@
+{
+    "src": "./src/",
+    "assets": "./src/assets/",
+    "build": "./dist/",
+    "scss": "./src/assets/scss/",
+    "css": "./src/assets/css/",
+    "scripts": "./src/assets/scripts/"
+}

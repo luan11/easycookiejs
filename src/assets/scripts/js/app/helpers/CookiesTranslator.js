@@ -1,4 +1,4 @@
-import {Validator} from './Validator';
+import {Validator, Debugger} from './Debugger';
 
 /**
  * The helper class to translate cookies
@@ -29,7 +29,7 @@ export class CookiesTranslator {
         let translator = new CookiesTranslator;
         
         if(method === 'GET'){
-            if(cookies.length === 0) return Validator.invalid('No cookies found');
+            if(cookies.length === 0) return Debugger.setError('No cookies found');
             return translator._getTranslation(cookies);
         }
         
@@ -99,9 +99,9 @@ export class CookiesTranslator {
         if(cookies.samesite !== null) cookiestr += " SameSite={samesite};";
 
         for (const key in cookies){
-            cookiestr = cookiestr.replace(new RegExp("{"+ key +"}", "g"), cookies[key]);
+            cookiestr = cookiestr.replace(new RegExp(`{${key}}`, "g"), cookies[key]);
         }
-        
+
         return cookiestr;
     }
 

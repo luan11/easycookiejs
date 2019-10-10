@@ -1,10 +1,10 @@
 import {CookiesTranslator} from './../helpers/CookiesTranslator';
-import {Validator} from './../helpers/Validator';
+import {Debugger} from '../helpers/Debugger';
 
 export class Cookie {
 
     constructor(){
-        this.validator = new Validator();
+        this.debugger = new Debugger();
         this.cookie = {
             name: '',
             value: '',
@@ -19,12 +19,12 @@ export class Cookie {
         this._cached = CookiesTranslator.translate(document.cookie);
     }
 
-    enableLogs(){
-        this.validator.logs = true;
+    enableDebug(){
+        this.debugger.debug = true;
     }
 
     all(){
-        return this.validator.validate(this._cached);
+        return this.debugger.check(this._cached);
     }
 
     set(cookie){
